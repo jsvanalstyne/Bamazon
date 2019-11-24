@@ -47,12 +47,22 @@ inquirer.prompt([
  inquirer.prompt([
    {
      type: "input",
-     message:"How many would you like ot purchase?",
+     message:"How many would you like to purchase?",
      name:"quantity"
    }
  ]).then(function(requested){
   var requestedQuantity = requested.quantity
   console.log(requestedQuantity);
- })
+  var productQuantity= 5;
+  if(requestedQuantity< productQuantity ){
+    var updatedProductQuantity=productQuantity-= requestedQuantity
+    console.log(updatedProductQuantity);
+  }
+  else{
+    console.log("There is not enough quantity to fill your order! Have a great day!");
+    // Display table and inquire again. 
+  }
+   })
 });
+connection.end();
 }
