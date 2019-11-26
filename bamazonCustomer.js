@@ -1,7 +1,9 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-const cTable = require('console.table');
+var Table = require("cli-table");
+var colors = require("colors");
 
+// Create connection to MySQL database named "bamazon"
 var connection = mysql.createConnection({
   host: "localhost",
 
@@ -21,69 +23,93 @@ connection.connect(function (err) {
   console.log("connected as id " + connection.threadId + "\n");
   displayAllItems();
 
-
 });
-
+// Create a function to display all items from the "bamazon" database in a table format. 
+// Used npm cli-table
 function displayAllItems() {
   connection.query(
     "SELECT * FROM products", function (err, results) {
       if (err) throw err;
       //   console.log(results)
-      console.table(results);
+      // Create a new table object with the headers from MySql
+      var displayProductTable = new Table({
+        head: ["ID", "Item Name", "Department", "Price", "Quantity in Stock"],
+        colWidths: [5, 15, 20, 5, 5]
+      });
+      // Using a for loop, the information from MySql database is pushed into the table
+      for (var i = 0; i < results.length; i++) {
+        displayProductTable.push(
+          [results[i].item_id, results[i].product_name, results[i].department_name, results[i].price, results[i].stock_quantity]
+        );
+      }
+      console.log(displayProductTable.toString());
       buyProduct();
     }
   )
   // connection.end();
 }
+// This function allows the user to select the item they want purchase by selecting the corresponding ID number and typing in how much they would like to purchase. 
 function buyProduct() {
-  inquirer.prompt([
-    {
-      type: "input",
-      message: "What you like to purchase?",
-      name: "productName"
-    }
-  ]).then(function (user) {
-    var chosenProduct = user.productName
-    console.log(chosenProduct);
-    inquirer.prompt([
+
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "productId",
+        message: "What would you like to purchase? Please enter the item ID number.",
+
+      },
       {
         type: "input",
         message: "How many would you like to purchase?",
-        name: "quantity"
-      }
-    ]).then(function (requested) {
-      var requestedQuantity = requested.quantity
-      console.log(requestedQuantity);
-      var productQuantity = 5;
-      if (requestedQuantity < productQuantity) {
-        var updatedProductQuantity = productQuantity -= requestedQuantity
-        console.log(updatedProductQuantity);
-        console.log("Congratulations on your purchase!");
-        connection.end();
-      }
-      else {
-        console.log("There is not enough quantity to fill your order! Have a great day!");
-        inquirer.prompt([
-          {
-            type: "choices",
-            message: "Would you like to play again?",
-            choices: ["Yes", "No"],
-            name: "orderAgain"
-          }
-        ]).then(function (store) {
-          switch (store.orderAgain) {
-            case "Yes":
-              displayAllItems();
-              break;
-            case "No":
-              connection.end();
-              break;
+        name: "productAmount",
 
-          }
-        })
-      
       }
+    ])
+    .then(function (requested) {
+      // The responses are saved into variables and then passed into the customer order function to see if there is enough in stock and to calculate the total. 
+      var requestedProduct = parseInt(requested.productId);
+      console.log(requestedProduct)
+      var amountRequested = parseInt(requested.productAmount);
+      console.log(amountRequested);
+      customerOrder(requestedProduct, amountRequested);
     })
-  });
-  
+
+  function customerOrder(requestedProduct, amountRequested) {
+    // connection.query("SELECT * FROM products WHERE 'item_id=4'", function (err, results) {
+    //   console.log(results.affectedRows);
+    console.log(requestedProduct);
+    connection.query("SELECT * FROM products WHERE ?", { item_id: requestedProduct },
+
+      function (err, results) {
+        if (err) throw err;
+        console.log(results);
+
+        if (amountRequested <= results[0].stock_quantity) {
+          connection.query("UPDATE products SET ? WHERE ?", [
+            // Passing an array of objects to replace the question marks in order that they appear
+            {
+              stock_quantity: results[0].stock_quantity - amountRequested
+            },
+            {
+              item_id: requestedProduct
+            }
+          ], function (err, results) {
+            // console.log(results.affectedRows);
+            if (err) throw err;
+          })
+          var customerTotalAmount = results[0].price * amountRequested;
+          console.log("Congratulations on your purchase of " + results[0].product_name + ". Your total is " + customerTotalAmount);
+        }
+        else {
+          console.log("Sorry, we do not have enough " + results[0].product_name + " to fill your order.")
+
+        }
+        connection.end();
+      });
+  }
+
+// Try to get it down to 2 connection.query
+// Make sure you have "throw err" everytime
+// Try testing it in my sql if it isnt working in the code. 
 }
