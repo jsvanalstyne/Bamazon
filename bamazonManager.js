@@ -56,7 +56,7 @@ function managerFunction() {
     });
 
 }
-
+// Displays all of the products from the products table. 
 function viewProducts() {
     connection.query("SELECT item_id, product_name, price, stock_quantity FROM products", function (err, results) {
         if (err) throw err;
