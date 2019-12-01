@@ -18,7 +18,7 @@ var connection = mysql.createConnection({
 
 connection.connect(function (err) {
     if (err) throw err;
-    console.log("connected as id " + connection.threadId + "\n");
+    // console.log("connected as id " + connection.threadId + "\n");
     managerFunction();
 
 });
@@ -33,7 +33,7 @@ function managerFunction() {
 
         }
     ]).then(function (action) {
-        console.log(action.managerChoice);
+        // console.log(action.managerChoice);
         switch (action.managerChoice.toString()) {
 
             case "View Products for Sale":
@@ -119,7 +119,7 @@ function addInventory() {
             }
         ]).then(function (supervisor) {
             var updatedStock = (parseInt(supervisor.addInventory)) + (parseInt(results[supervisor.selectProduct - 1].stock_quantity));
-            console.log(updatedStock);
+            // console.log(updatedStock);
             connection.query("UPDATE products SET ? WHERE ?",[
                 {
                     stock_quantity: updatedStock,

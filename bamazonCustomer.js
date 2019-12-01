@@ -34,7 +34,7 @@ function displayAllItems() {
       // Create a new table object with the headers from MySql
       var displayProductTable = new Table({
         head: ["ID", "Item Name", "Department", "Price", "Quantity in Stock"],
-        colWidths: [5, 15, 20, 5, 5]
+        colWidths: [5, 15, 20, 10, 10]
       });
       // Using a for loop, the information from MySql database is pushed into the table
       for (var i = 0; i < results.length; i++) {
@@ -69,9 +69,9 @@ function buyProduct() {
     .then(function (requested) {
       // The responses are saved into variables and then passed into the customer order function to see if there is enough in stock and to calculate the total. 
       var requestedProduct = parseInt(requested.productId);
-      console.log(requestedProduct)
+      // console.log(requestedProduct)
       var amountRequested = parseInt(requested.productAmount);
-      console.log(amountRequested);
+      // console.log(amountRequested);
       customerOrder(requestedProduct, amountRequested);
     })
   function repeatOrder(){
@@ -95,12 +95,13 @@ function buyProduct() {
   function customerOrder(requestedProduct, amountRequested) {
     // connection.query("SELECT * FROM products WHERE 'item_id=4'", function (err, results) {
     //   console.log(results.affectedRows);
-    console.log(requestedProduct);
+    // console.log(requestedProduct);
     connection.query("SELECT * FROM products WHERE ?", { item_id: requestedProduct },
 
       function (err, results) {
         if (err) throw err;
-        console.log(results);
+        // console.log(results)n
+
 
         if (amountRequested <= results[0].stock_quantity) {
           connection.query("UPDATE products SET ? WHERE ?", [
