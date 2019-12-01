@@ -117,7 +117,7 @@ function buyProduct() {
             if (err) throw err;
           })
           var customerTotalAmount = results[0].price * amountRequested;
-          console.log("Congratulations on your purchase of " + results[0].product_name + ". Your total is " + customerTotalAmount);
+          console.log("Congratulations on your purchase of " + results[0].product_name + "s. Your total is " + customerTotalAmount)+ " dollars.";
           repeatOrder();
         }
         else {
