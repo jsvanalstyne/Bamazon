@@ -74,7 +74,24 @@ function buyProduct() {
       console.log(amountRequested);
       customerOrder(requestedProduct, amountRequested);
     })
+  function repeatOrder(){
+    inquirer.prompt([
 
+      {
+        type: "input",
+        message: "Would you like to something else?(y/n)",
+        name: "start"
+      }
+    ]).then(function(repeat){
+      var answered = repeat.start.toLowerCase();
+      if(answered==="y"){
+        buyProduct();
+      }
+      else{
+        connection.end();
+      }
+    }
+    )}
   function customerOrder(requestedProduct, amountRequested) {
     // connection.query("SELECT * FROM products WHERE 'item_id=4'", function (err, results) {
     //   console.log(results.affectedRows);
@@ -100,12 +117,13 @@ function buyProduct() {
           })
           var customerTotalAmount = results[0].price * amountRequested;
           console.log("Congratulations on your purchase of " + results[0].product_name + ". Your total is " + customerTotalAmount);
+          repeatOrder();
         }
         else {
           console.log("Sorry, we do not have enough " + results[0].product_name + " to fill your order.")
-
+          repeatOrder();
         }
-        connection.end();
+      
       });
   }
 
