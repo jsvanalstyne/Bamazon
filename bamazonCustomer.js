@@ -34,7 +34,7 @@ function displayAllItems() {
       // Create a new table object with the headers from MySql
       var displayProductTable = new Table({
         head: ["ID", "Item Name", "Department", "Price", "Quantity in Stock"],
-        colWidths: [5, 15, 20, 10, 10]
+        colWidths: [5, 15, 20, 10, 20]
       });
       // Using a for loop, the information from MySql database is pushed into the table
       for (var i = 0; i < results.length; i++) {
