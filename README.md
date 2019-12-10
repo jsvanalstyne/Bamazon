@@ -34,6 +34,8 @@ Bamazon is a command line node application that allows the customer to purchase 
         
 ## Link to Demo
 
+[Bamazon](https://drive.google.com/file/d/1mktgm-904jVE96wTiF08h0ZUU4k-tCQc/view)
+
 
 ## Built With
 - Node
